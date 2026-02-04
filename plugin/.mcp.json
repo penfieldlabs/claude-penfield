@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "penfield": {
+      "type": "http",
+      "url": "https://mcp.penfield.app"
+    }
+  }
+}

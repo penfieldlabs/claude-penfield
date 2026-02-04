@@ -1,0 +1,18 @@
+{
+  "name": "penfield-plugins",
+  "owner": {
+    "name": "Penfield",
+    "email": "support@penfield.app"
+  },
+  "plugins": [
+    {
+      "name": "penfield",
+      "source": "./plugin",
+      "description": "Persistent memory that compounds. Remember decisions, preferences, and context across every session with knowledge graphs.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Penfield"
+      }
+    }
+  ]
+}
