@@ -15,24 +15,49 @@ set -euo pipefail
 #######################################
 # Model for context extraction. Options: haiku, sonnet, opus
 # Default: haiku (fast, cost-effective)
+# Set via: export PENFIELD_PRECOMPACT_MODEL=sonnet
 # Upgrading to sonnet/opus improves quality but increases cost and
 # counts against your Claude subscription usage limits.
-PRECOMPACT_MODEL="${PRECOMPACT_MODEL:-haiku}"
+PRECOMPACT_MODEL="${PENFIELD_PRECOMPACT_MODEL:-haiku}"
 
 # Validate model
 case "$PRECOMPACT_MODEL" in
     haiku|sonnet|opus) ;;
-    *) echo "Error: PRECOMPACT_MODEL must be haiku, sonnet, or opus (got: $PRECOMPACT_MODEL)" >&2; exit 1 ;;
+    *) echo "Error: PENFIELD_PRECOMPACT_MODEL must be haiku, sonnet, or opus (got: $PRECOMPACT_MODEL)" >&2; exit 1 ;;
 esac
 
 # User message truncation threshold (characters)
 USER_MESSAGE_TRUNCATE_THRESHOLD=5000
 
 #######################################
+# Logging configuration
+#######################################
+# Log to existing debug directory (no mkdir needed)
+LOG_FILE="${HOME}/.claude/debug/penfield-precompact.log"
+MAX_LOG_SIZE_BYTES=$((5 * 1024 * 1024))  # 5MB
+
+# Rotate log if it exceeds 5MB (keeps last rotation as .old)
+if [ -f "$LOG_FILE" ]; then
+    LOG_SIZE=$(stat -f%z "$LOG_FILE" 2>/dev/null || stat -c%s "$LOG_FILE" 2>/dev/null || echo 0)
+    if [ "$LOG_SIZE" -gt "$MAX_LOG_SIZE_BYTES" ]; then
+        mv "$LOG_FILE" "$LOG_FILE.old"
+    fi
+fi
+
+# Simple log function: timestamp + level + message
+log_message() {
+    local level="$1"
+    shift
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $*" >> "$LOG_FILE"
+}
+
+log_message "INFO" "Hook started (model: $PRECOMPACT_MODEL)"
+
+#######################################
 # Dependency check
 #######################################
 if ! command -v jq &> /dev/null; then
-    echo "Error: jq is required but not installed" >&2
+    log_message "ERROR" "jq is required but not installed"
     exit 0
 fi
 
@@ -49,23 +74,23 @@ TRIGGER=$(echo "$INPUT" | jq -r '.trigger // "auto"' | tr -cd 'a-zA-Z0-9_')
 
 # Validate required fields
 if [ -z "$TRANSCRIPT_PATH" ]; then
-    echo "Error: No transcript_path in hook input" >&2
+    log_message "ERROR" "No transcript_path in hook input"
     exit 0
 fi
 
 # Validate transcript path is within expected directory (prevent directory traversal)
 if [[ "$TRANSCRIPT_PATH" != "$HOME/.claude/"* ]]; then
-    echo "Error: Transcript path outside expected directory: $TRANSCRIPT_PATH" >&2
+    log_message "ERROR" "Transcript path outside expected directory: $TRANSCRIPT_PATH"
     exit 0
 fi
 
 if [ ! -f "$TRANSCRIPT_PATH" ]; then
-    echo "Error: Transcript file not found: $TRANSCRIPT_PATH" >&2
+    log_message "ERROR" "Transcript file not found: $TRANSCRIPT_PATH"
     exit 0
 fi
 
 if [ ! -r "$TRANSCRIPT_PATH" ]; then
-    echo "Error: Transcript file not readable: $TRANSCRIPT_PATH" >&2
+    log_message "ERROR" "Transcript file not readable: $TRANSCRIPT_PATH"
     exit 0
 fi
 
@@ -149,7 +174,7 @@ fi
 # Validate content and prepare prompt
 #######################################
 if [ "$RECENT_CONTEXT" = "[]" ] || [ "$RECENT_CONTEXT" = "null" ] || [ -z "$RECENT_CONTEXT" ]; then
-    echo "No content to summarize since last compaction" >&2
+    log_message "INFO" "No content to summarize"
     exit 0
 fi
 
@@ -164,6 +189,8 @@ else
     CONTEXT_NAME_PREFIX="session"
 fi
 
+log_message "INFO" "Extracting context (session: $CONTEXT_NAME_PREFIX)"
+
 # Write recent context to temp file to avoid shell escaping issues
 TEMP_CONTEXT_FILE=$(mktemp)
 trap 'rm -f "$TEMP_CONTEXT_FILE"' EXIT
@@ -172,7 +199,7 @@ echo "$RECENT_CONTEXT" > "$TEMP_CONTEXT_FILE"
 #######################################
 # Spawn subagent to extract and save context
 #######################################
-# - --model: Configurable via PRECOMPACT_MODEL (default: haiku)
+# - --model: Configurable via PENFIELD_PRECOMPACT_MODEL env var (default: haiku)
 # - --max-turns 10: Allow retries if MCP call fails
 # - --allowedTools: Only permit Penfield MCP tools (save_context, store)
 #
@@ -261,22 +288,22 @@ Now store() your insights and then save_context() according to the instructions 
 EOF
 
 # Execute claude -p to save context
-# Uses plugin MCP tools: mcp__plugin_penfield_penfield__save_context, mcp__plugin_penfield_penfield__store
-# Hook timeout (300s in hooks.json) handles runaway processes.
+# Output redirected to log file to prevent leaking to main assistant's conversation
 set +e
 claude -p \
   --model "$PRECOMPACT_MODEL" \
   --max-turns 10 \
   --allowedTools "mcp__plugin_penfield_penfield__save_context,mcp__plugin_penfield_penfield__store" \
   < "$TEMP_PROMPT_FILE" \
-  2>&1 | tail -100
-EXIT_CODE=${PIPESTATUS[0]}
+  >> "$LOG_FILE" 2>&1
+EXIT_CODE=$?
 set -e
 
+# Log result (file only - no stderr to avoid leaking to main agent)
 if [ "$EXIT_CODE" -eq 0 ]; then
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] PreCompact: Context saved successfully (session: $CONTEXT_NAME_PREFIX)" >&2
+    log_message "SUCCESS" "Context saved: $CONTEXT_NAME_PREFIX"
 else
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] PreCompact: Failed to save context (exit code: $EXIT_CODE, session: $CONTEXT_NAME_PREFIX)" >&2
+    log_message "FAILED" "Exit code $EXIT_CODE | Session: $CONTEXT_NAME_PREFIX"
 fi
 
 exit 0

@@ -9,7 +9,7 @@
       "name": "penfield",
       "source": "./plugin",
       "description": "Persistent memory that compounds. Remember decisions, preferences, and context across every session with knowledge graphs.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Penfield"
       }

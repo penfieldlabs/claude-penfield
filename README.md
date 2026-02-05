@@ -135,21 +135,21 @@ Commands with multiple arguments use `|` as separator:
 
 By default, the PreCompact hook uses **Haiku** for cost efficiency. If you want higher quality context extraction, you can upgrade to Sonnet or Opus.
 
-**Option 1: Environment variable**
+**Option 1: Environment variable** (recommended)
 ```bash
-export PRECOMPACT_MODEL=sonnet  # or opus
+export PENFIELD_PRECOMPACT_MODEL=sonnet  # Options: haiku (default), sonnet, opus
 ```
 
 **Option 2: Edit the script directly**
 
 Find this line in `hooks/scripts/pre-compact.sh`:
 ```bash
-PRECOMPACT_MODEL="${PRECOMPACT_MODEL:-haiku}"
+PRECOMPACT_MODEL="${PENFIELD_PRECOMPACT_MODEL:-haiku}"
 ```
 
 Change `haiku` to `sonnet` or `opus`:
 ```bash
-PRECOMPACT_MODEL="${PRECOMPACT_MODEL:-sonnet}"
+PRECOMPACT_MODEL="${PENFIELD_PRECOMPACT_MODEL:-sonnet}"
 ```
 
 | Model | Quality |
@@ -163,6 +163,20 @@ PRECOMPACT_MODEL="${PRECOMPACT_MODEL:-sonnet}"
 ### Session Log Fallback
 
 Can't find something in Penfield? The session-start injection includes the path to Claude Code's **complete verbatim session log**. Claude can search it directly when memory recall falls short.
+
+### PreCompact Hook Logs
+
+The PreCompact hook logs to `~/.claude/debug/penfield-precompact.log`:
+
+- **Single file** with simple 5MB rotation (keeps `.old` backup)
+- **Structured:** Timestamp | Level | Message
+- **Concise:** Success/fail status with session context
+- **Location:** Uses existing debug directory (no new directories created)
+
+**View logs:**
+```bash
+tail -f ~/.claude/debug/penfield-precompact.log
+```
 
 ---
 
