@@ -6,7 +6,7 @@ No more Groundhog Day. No more re-explaining your codebase. No more lost context
 
 ---
 
-## Install
+## Install the Penfield Plugin in Claude Code
 
 ```bash
 # Add the marketplace
@@ -14,6 +14,16 @@ No more Groundhog Day. No more re-explaining your codebase. No more lost context
 
 # Install the plugin
 /plugin install penfield
+```
+
+## Install jq
+
+```bash
+# macOS
+brew install jq
+
+# Linux 
+apt install jq
 ```
 
 ### Restart and Authenticate
