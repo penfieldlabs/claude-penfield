@@ -116,5 +116,6 @@ If a release has critical issues:
 
 ## Version History
 
+- **v1.1.0** (2026-02-09): Natural language UX — replaced 17 slash commands with conversational interface, added timestamp to PreCompact context names to prevent duplicates
 - **v1.0.1** (2026-02-05): Fixed duplicate context saves in PreCompact hook
-- **v1.0.0** (2026-02-03): Initial release - Persistent memory system for Claude Code with knowledge graphs, 18 commands & skills, SessionStart and PreCompact hooks
+- **v1.0.0** (2026-02-03): Initial release — persistent memory with knowledge graphs, SessionStart and PreCompact hooks

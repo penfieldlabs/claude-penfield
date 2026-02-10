@@ -63,13 +63,13 @@ You have persistent memory via the Penfield MCP server. This means you can remem
 - If substantive work was done, use \`save_context()\` with a detailed cognitive handoff
 - This ensures the next session can pick up exactly where you left off
 
-### Available Tools (17)
+### Available Tools
 **Memory:** store, recall, search, fetch, update_memory
 **Knowledge Graph:** connect, disconnect, explore
 **Context:** awaken, reflect, save_context, restore_context, list_contexts
 **Artifacts:** save_artifact, retrieve_artifact, list_artifacts, delete_artifact
 
-Use \`/penfield:help\` for the full command reference.
+Use \`/penfield:help\` for the full quick reference.
 
 $FALLBACK_SECTION
 </penfield-memory>

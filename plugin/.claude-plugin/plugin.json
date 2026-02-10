@@ -1,6 +1,6 @@
 {
   "name": "penfield",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Persistent memory that compounds. Remember decisions, preferences, and context across every session with knowledge graphs.",
   "author": {
     "name": "Penfield",

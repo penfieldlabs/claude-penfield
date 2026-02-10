@@ -129,7 +129,7 @@ Choose the right tool based on query intent:
 - Use tags for categorization (2–5 lowercase tags), but don't use dates as tags (timestamps are automatic)
 - Use `disconnect()` to remove incorrect relationships
 
-## Available Tools (17)
+## Available Tools
 
 | Tool | Purpose |
 |------|---------|

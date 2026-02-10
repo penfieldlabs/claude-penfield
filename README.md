@@ -6,7 +6,7 @@ No more Groundhog Day. No more re-explaining your codebase. No more lost context
 
 ---
 
-## Install the Penfield Plugin in Claude Code
+## Install
 
 ```bash
 # Add the marketplace
@@ -14,16 +14,6 @@ No more Groundhog Day. No more re-explaining your codebase. No more lost context
 
 # Install the plugin
 /plugin install penfield
-```
-
-## Install jq
-
-```bash
-# macOS
-brew install jq
-
-# Linux 
-apt install jq
 ```
 
 ### Restart and Authenticate
@@ -37,6 +27,11 @@ After installing, **restart Claude Code** to load the plugin's MCP server, then 
 
 Sign up for an account at [portal.penfield.app](https://portal.penfield.app/sign-up).
 
+## Install jq
+
+- brew install jq (macOS)
+- apt install jq (Linux)
+
 ### Already have a user-configured Penfield MCP?
 
 If you previously installed Penfield via `claude mcp add`, you should **disable or remove** it to avoid having duplicate MCP servers:
@@ -46,7 +41,7 @@ If you previously installed Penfield via `claude mcp add`, you should **disable 
 claude mcp remove penfield
 ```
 
-The plugin-provided MCP (`plugin:penfield:penfield`) includes all the same tools plus hooks and slash commands. You only need one.
+The plugin-provided MCP (`plugin:penfield:penfield`) includes all the same tools plus hooks and skills. You only need one.
 
 <details>
 <summary>Manual MCP-only setup (no plugin features)</summary>
@@ -55,7 +50,7 @@ The plugin-provided MCP (`plugin:penfield:penfield`) includes all the same tools
 claude mcp add --transport http penfield https://mcp.penfield.app
 ```
 
-This gives you the 17 memory tools but none of the plugin features below. **Not recommended** — use the plugin instead.
+This gives you the memory tools but none of the plugin features below. **Not recommended** — use the plugin instead.
 
 </details>
 
@@ -65,8 +60,8 @@ This gives you the 17 memory tools but none of the plugin features below. **Not 
 
 | Feature | MCP Only | With Plugin |
 |---------|----------|-------------|
-| 17 memory tools | Yes | Yes |
-| 18 slash commands | No | Yes |
+| Memory tools | Yes | Yes |
+| `/penfield:help` quick reference | No | Yes |
 | Auto-context on session start | No | Hook injects memory instructions every session |
 | Automatic pre-compaction save | No | Subagent saves context before compaction |
 | Session log fallback | No | Path injected for searching raw logs |
@@ -77,58 +72,18 @@ This gives you the 17 memory tools but none of the plugin features below. **Not 
 
 ---
 
-## Slash Commands
+## Using Penfield
 
-### Memory Operations
+Just talk naturally. No special commands needed.
 
-| Command | Description |
-|---------|-------------|
-| `/penfield:recall <query>` | Search memories (hybrid: BM25 + vector + graph) |
-| `/penfield:search <query>` | Semantic search (pure vector similarity) |
-| `/penfield:store <content>` | Store a new memory (type auto-detected) |
-| `/penfield:fetch <id>` | Get full memory by UUID |
-| `/penfield:update <id> \| [content] \| [importance] \| [tags]` | Update existing memory |
+- **Remember things:** "Remember this: I prefer morning meetings, not afternoons"
+- **Recall things:** "What did we decide about the pricing strategy?"
+- **Fix mistakes:** "Update memory: it's actually John who handles legal, not Sarah"
+- **Connect ideas:** "Connect this decision to our discussion about customer feedback"
+- **Save checkpoints:** "Save a checkpoint for Project Alpha"
+- **Resume work:** "Restore the checkpoint for Project Alpha"
 
-### Knowledge Graph
-
-| Command | Description |
-|---------|-------------|
-| `/penfield:connect <from> \| <to> \| <relationship>` | Link two memories |
-| `/penfield:disconnect <from> \| <to>` | Remove a link |
-| `/penfield:explore <id> \| [depth]` | Traverse connections from a memory |
-
-### Context Management
-
-| Command | Description |
-|---------|-------------|
-| `/penfield:save <name> \| [description]` | Save session context checkpoint |
-| `/penfield:restore <name>` | Resume from saved checkpoint |
-| `/penfield:contexts` | List all saved checkpoints |
-| `/penfield:reflect [time_window]` | Analyze recent memory patterns |
-| `/penfield:awaken` | Load personality configuration |
-
-### Artifacts
-
-| Command | Description |
-|---------|-------------|
-| `/penfield:artifacts [path]` | List saved files |
-| `/penfield:save-artifact <path> \| <content>` | Save a file |
-| `/penfield:get-artifact <path>` | Retrieve a file |
-| `/penfield:delete-artifact <path>` | Delete a file |
-
-### Help
-
-| Command | Description |
-|---------|-------------|
-| `/penfield:help` | Show all available commands |
-
-### Pipe-Separated Arguments
-
-Commands with multiple arguments use `|` as separator:
-```
-/penfield:connect abc-123 | def-456 | supports
-/penfield:save My Checkpoint | Description of what I was working on
-```
+Run `/penfield:help` for the full quick reference.
 
 ---
 
@@ -240,7 +195,7 @@ See [penfield-mcp](https://github.com/penfieldlabs/penfield-mcp) for setup instr
 ```
 claude-penfield/
 ├── .claude-plugin/
-│   └── marketplace.json       # Marketplace catalog (v1.0.0)
+│   └── marketplace.json       # Marketplace catalog
 ├── plugin/
 │   ├── .claude-plugin/
 │   │   └── plugin.json        # Plugin manifest
@@ -250,25 +205,8 @@ claude-penfield/
 │   │   └── scripts/
 │   │       ├── session-start.sh
 │   │       └── pre-compact.sh
-│   ├── commands/              # 18 slash commands
-│   │   ├── help.md            # /penfield:help
-│   │   ├── recall.md          # /penfield:recall
-│   │   ├── search.md          # /penfield:search
-│   │   ├── store.md           # /penfield:store
-│   │   ├── fetch.md           # /penfield:fetch
-│   │   ├── update.md          # /penfield:update
-│   │   ├── connect.md         # /penfield:connect
-│   │   ├── disconnect.md      # /penfield:disconnect
-│   │   ├── explore.md         # /penfield:explore
-│   │   ├── save.md            # /penfield:save
-│   │   ├── restore.md         # /penfield:restore
-│   │   ├── contexts.md        # /penfield:contexts
-│   │   ├── reflect.md         # /penfield:reflect
-│   │   ├── awaken.md          # /penfield:awaken
-│   │   ├── artifacts.md       # /penfield:artifacts
-│   │   ├── save-artifact.md   # /penfield:save-artifact
-│   │   ├── get-artifact.md    # /penfield:get-artifact
-│   │   └── delete-artifact.md # /penfield:delete-artifact
+│   ├── commands/
+│   │   └── help.md            # /penfield:help quick reference
 │   └── skills/
 │       └── penfield/
 │           └── SKILL.md       # Auto-activating memory skill
@@ -286,7 +224,7 @@ claude-penfield/
 
 ## Documentation
 
-- [Tools Reference](https://github.com/penfieldlabs/penfield-mcp/blob/main/docs/TOOLS.md) — All 17 tools with parameters and examples
+- [Tools Reference](https://github.com/penfieldlabs/penfield-mcp/blob/main/docs/TOOLS.md) — All tools with parameters and examples
 - [Memory Types](https://github.com/penfieldlabs/penfield-mcp/blob/main/docs/MEMORY-TYPES.md) — The 11 memory types and when to use each
 - [Relationships](https://github.com/penfieldlabs/penfield-mcp/blob/main/docs/RELATIONSHIPS.md) — The 24 relationship types for knowledge graphs
 - [AI Agent Guide](https://github.com/penfieldlabs/penfield-mcp/blob/main/SKILL.md) — Instructions for AI agents using Penfield

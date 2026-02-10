@@ -178,15 +178,16 @@ if [ "$RECENT_CONTEXT" = "[]" ] || [ "$RECENT_CONTEXT" = "null" ] || [ -z "$RECE
     exit 0
 fi
 
-# Generate context name prefix from session ID
-# Format: {first4}-{last4}-{descriptor}
-# Example: 7b67-14a5-api-debugging
+# Generate context name prefix from session ID + timestamp
+# Format: {first4}-{last4}-{YYMMdd-HHmm}-{descriptor}
+# Example: 7b67-14a5-260209-1423-api-debugging
+TIMESTAMP=$(date +'%y%m%d-%H%M')
 if [ ${#SESSION_ID} -ge 8 ]; then
     SESSION_PREFIX="${SESSION_ID:0:4}"
     SESSION_POSTFIX="${SESSION_ID: -4}"
-    CONTEXT_NAME_PREFIX="${SESSION_PREFIX}-${SESSION_POSTFIX}"
+    CONTEXT_NAME_PREFIX="${SESSION_PREFIX}-${SESSION_POSTFIX}-${TIMESTAMP}"
 else
-    CONTEXT_NAME_PREFIX="session"
+    CONTEXT_NAME_PREFIX="session-${TIMESTAMP}"
 fi
 
 log_message "INFO" "Extracting context (session: $CONTEXT_NAME_PREFIX)"
@@ -206,8 +207,6 @@ echo "$RECENT_CONTEXT" > "$TEMP_CONTEXT_FILE"
 # This runs in the background (async: true in hooks.json).
 # Hook timeout (300s) handles runaway processes.
 
-# Build prompt safely - use quoted heredoc to prevent shell injection,
-# then append the JSON content separately
 TEMP_PROMPT_FILE=$(mktemp)
 trap 'rm -f "$TEMP_CONTEXT_FILE" "$TEMP_PROMPT_FILE"' EXIT
 
@@ -229,7 +228,7 @@ After EACH store() call, note the returned memory_id UUID.
 
 STEP 2: After storing all insights, call save_context() with:
 - name: "$CONTEXT_NAME_PREFIX-[your-descriptor]"
-  where [your-descriptor] is 2-4 words in kebab-case describing the work (max 30 chars)
+  where [your-descriptor] is 2-4 words in kebab-case describing the work (max 60 chars)
   Example: "$CONTEXT_NAME_PREFIX-api-debugging" or "$CONTEXT_NAME_PREFIX-hook-testing"
 
 - description: A cognitive handoff that MUST include this EXACT format for each stored memory:

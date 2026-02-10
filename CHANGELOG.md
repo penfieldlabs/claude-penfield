@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-09
+
+### Changed
+- **Slash commands replaced with natural language:** Removed 17 slash commands (recall, store, search, fetch, update-memory, connect, disconnect, explore, save, restore, contexts, reflect, awaken, artifacts, save-artifact, get-artifact, delete-artifact). Users now interact with Penfield using natural language — just talk to your AI.
+- **`/penfield:help` rewritten:** Now shows a natural language quick reference based on the [official user guide](https://github.com/penfieldlabs/docs/blob/main/onboarding/penfield-user-quick-reference.md) instead of slash command syntax.
+- **PreCompact context names include timestamp:** Format changed from `{first4}-{last4}-{descriptor}` to `{first4}-{last4}-{YYMMdd-HHmm}-{descriptor}`. Prevents duplicate checkpoint names when the same session compacts multiple times.
+- **Descriptor budget increased:** Subagent descriptor max increased from 30 to 60 chars (total name max 82, well under 100-char API limit).
+
+### Fixed
+- Removed hardcoded tool/command counts from README, SKILL.md, and session-start.sh
+- TODO.md: marked CHANGELOG item as done, fixed stale log path (`~/.claude/logs/` → `~/.claude/debug/penfield-precompact.log`)
+
 ## [1.0.1] - 2026-02-05
 
 ### Fixed
@@ -44,8 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Analyze recent memory patterns and topics
 - **Artifact management**
   - save_artifact, retrieve_artifact, list_artifacts, delete_artifact
-- **18 commands & skills**
-  - recall, store, connect, explore, search, fetch, update_memory, disconnect, awaken, reflect, save_context, restore_context, list_contexts, save_artifact, retrieve_artifact, list_artifacts, delete_artifact, summarize
+- **17 tools and skills**
+  - recall, store, connect, explore, search, fetch, update_memory, disconnect, awaken, reflect, save_context, restore_context, list_contexts, save_artifact, retrieve_artifact, list_artifacts, delete_artifact
 - **SessionStart hook**
   - Auto-loads personality and previous context
 - **PreCompact hook**
@@ -53,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **MCP server integration**
   - Full integration with Claude Code plugin system
 
-[Unreleased]: https://github.com/penfieldlabs/claude-penfield/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/penfieldlabs/claude-penfield/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/penfieldlabs/claude-penfield/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/penfieldlabs/claude-penfield/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/penfieldlabs/claude-penfield/releases/tag/v1.0.0

@@ -1,61 +1,71 @@
 ---
-description: Show available Penfield commands
+description: Show how to use Penfield memory
 argument-hint:
 ---
 
-# Penfield Memory Commands
+# Penfield Memory - Quick Reference
 
 Display this help information to the user:
 
-## Memory Operations
+## You Just Talk Naturally
 
-| Command | Description |
-|---------|-------------|
-| `/penfield:recall <query>` | Search memories (hybrid: BM25 + vector + graph) |
-| `/penfield:search <query>` | Semantic search (pure vector similarity) |
-| `/penfield:store <content>` | Store a new memory (type auto-detected) |
-| `/penfield:fetch <id>` | Get full memory by UUID |
-| `/penfield:update <id> \| [content] \| [importance] \| [tags]` | Update existing memory |
+Penfield lets your AI remember things across conversations. You don't need commands - just talk naturally.
 
-## Knowledge Graph
+## Remembering Things
 
-| Command | Description |
-|---------|-------------|
-| `/penfield:connect <from> \| <to> \| <relationship>` | Link two memories |
-| `/penfield:disconnect <from> \| <to>` | Remove a link |
-| `/penfield:explore <id> \| [depth]` | Traverse connections from a memory |
+Say things like:
+- "Remember this: I prefer morning meetings, not afternoons"
+- "Don't forget - Sarah handles legal, John handles IT"
+- "Store this decision: We're focusing on enterprise this quarter"
 
-## Context Management
+You can tag memories for organization:
+- "Remember this and tag it as 'legal': Sarah handles all IP matters"
 
-| Command | Description |
-|---------|-------------|
-| `/penfield:save <name> \| [description]` | Save session context checkpoint |
-| `/penfield:restore <name>` | Resume from saved checkpoint |
-| `/penfield:contexts` | List all saved checkpoints |
-| `/penfield:reflect [time_window]` | Analyze recent memory patterns |
-| `/penfield:awaken` | Load personality configuration |
+## Recalling Things
 
-## Artifacts
+Start a new conversation with **"Awaken"** to load your context, then ask naturally:
+- "What did we decide about the pricing strategy?"
+- "What do you know about Project Atlas?"
+- "What did we discuss last week?"
 
-| Command | Description |
-|---------|-------------|
-| `/penfield:artifacts [path]` | List saved files |
-| `/penfield:save-artifact <path> \| <content>` | Save a file |
-| `/penfield:get-artifact <path>` | Retrieve a file |
-| `/penfield:delete-artifact <path>` | Delete a file |
+If your AI doesn't seem to be checking memories, say: "Check your memories first"
 
-## Pipe-Separated Arguments
+## Fixing Wrong Information
 
-Commands with multiple arguments use `|` as separator:
-```
-/penfield:connect abc-123 | def-456 | supports
-/penfield:save My Checkpoint | Description of what I was working on
-```
+- "Update memory: I said Sarah handles legal, but actually it's John"
+- "Correction - we're NOT focusing on enterprise anymore. Please update."
+
+## Connecting Ideas
+
+Usually automatic, but you can be explicit:
+- "Connect this decision to our discussion about customer feedback"
+- "This contradicts what we thought before - link them"
+
+## Project Checkpoints
+
+Save: "Save a checkpoint for Project Alpha - include everything we discussed"
+Resume: "Restore the checkpoint for Project Alpha"
+
+## Artifacts (File Storage)
+
+- "Save this as my standard PR template artifact"
+- "Get my PR template artifact"
+- "List my saved artifacts"
+
+## Exploring Connections
+
+- "Explore connections related to our Q3 strategy"
+- "Show me what's connected to Project Atlas"
+
+## Key Principles
+
+1. **Be specific** - Include context and reasoning, not just facts
+2. **Correct mistakes immediately** - "Update memory: the correct info is..."
+3. **Quality over quantity** - Store what matters next week/month/year
 
 ## Learn More
 
-- [Tools Reference](https://github.com/penfieldlabs/penfield-mcp/blob/main/docs/TOOLS.md)
-- [Memory Types](https://github.com/penfieldlabs/penfield-mcp/blob/main/docs/MEMORY-TYPES.md)
-- [Relationships](https://github.com/penfieldlabs/penfield-mcp/blob/main/docs/RELATIONSHIPS.md)
+- [Quick Reference](https://github.com/penfieldlabs/docs/blob/main/onboarding/penfield-user-quick-reference.md)
+- [Website](https://penfield.app)
 
 Do not call any tools. Just display this help text.
